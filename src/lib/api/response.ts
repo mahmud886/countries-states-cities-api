@@ -1,9 +1,20 @@
-export function jsonSuccess(data: unknown, options?: { meta?: Record<string, unknown>; status?: number }) {
+export function jsonSuccess(
+  data: unknown,
+  options?: { meta?: Record<string, unknown>; status?: number },
+) {
   const status = options?.status ?? 200;
-  return Response.json({ success: true, data, ...(options?.meta ? { meta: options.meta } : {}) }, { status });
+  return Response.json(
+    { success: true, data, ...(options?.meta ? { meta: options.meta } : {}) },
+    { status },
+  );
 }
 
-export function jsonError(params: { status: number; message: string; code?: string; details?: unknown }) {
+export function jsonError(params: {
+  status: number;
+  message: string;
+  code?: string;
+  details?: unknown;
+}) {
   return Response.json(
     {
       success: false,

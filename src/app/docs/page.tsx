@@ -1,14 +1,16 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 function CodeBlock(props: { title?: string; children: string }) {
   return (
-    <div className='w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-gray-200/70 bg-white shadow-sm'>
-      <div className='flex items-center justify-between border-b border-gray-200/70 bg-gray-50 px-4 py-2'>
-        <div className='text-xs font-medium text-gray-900'>{props.title ?? 'Example'}</div>
-        <div className='text-[11px] text-gray-600'>application/json</div>
+    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-xl border border-gray-200/70 bg-white shadow-sm">
+      <div className="flex items-center justify-between border-b border-gray-200/70 bg-gray-50 px-4 py-2">
+        <div className="text-xs font-medium text-gray-900">
+          {props.title ?? "Example"}
+        </div>
+        <div className="text-[11px] text-gray-600">application/json</div>
       </div>
-      <pre className='min-w-0 max-w-full overflow-x-auto whitespace-pre bg-white p-4 text-xs text-gray-900'>
-        <code className='block min-w-0'>{props.children}</code>
+      <pre className="min-w-0 max-w-full overflow-x-auto whitespace-pre bg-white p-4 text-xs text-gray-900">
+        <code className="block min-w-0">{props.children}</code>
       </pre>
     </div>
   );
@@ -16,43 +18,52 @@ function CodeBlock(props: { title?: string; children: string }) {
 
 function Pill(props: { children: React.ReactNode }) {
   return (
-    <span className='inline-flex items-center rounded-full border border-gray-200/70 bg-white px-2 py-0.5 text-xs text-gray-700'>
+    <span className="inline-flex items-center rounded-full border border-gray-200/70 bg-white px-2 py-0.5 text-xs text-gray-700">
       {props.children}
     </span>
   );
 }
 
-function SectionCard(props: { id: string; title: string; description?: string; children: React.ReactNode }) {
+function SectionCard(props: {
+  id: string;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
     <section
       id={props.id}
-      className='min-w-0 scroll-mt-24 rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm sm:p-6'
+      className="min-w-0 scroll-mt-24 rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm sm:p-6"
     >
-      <div className='flex flex-col gap-1'>
-        <h2 className='text-lg font-semibold'>{props.title}</h2>
-        {props.description ? <p className='text-sm text-gray-700'>{props.description}</p> : null}
+      <div className="flex flex-col gap-1">
+        <h2 className="text-lg font-semibold">{props.title}</h2>
+        {props.description ? (
+          <p className="text-sm text-gray-700">{props.description}</p>
+        ) : null}
       </div>
-      <div className='mt-4'>{props.children}</div>
+      <div className="mt-4">{props.children}</div>
     </section>
   );
 }
 
-function EndpointList(props: { items: Array<{ method: string; path: string; desc: string }> }) {
+function EndpointList(props: {
+  items: Array<{ method: string; path: string; desc: string }>;
+}) {
   return (
-    <div className='overflow-hidden rounded-xl border border-gray-200/70 bg-white shadow-sm'>
-      <ul className='divide-y divide-gray-100'>
+    <div className="overflow-hidden rounded-xl border border-gray-200/70 bg-white shadow-sm">
+      <ul className="divide-y divide-gray-100">
         {props.items.map((it) => (
           <li
             key={`${it.method}-${it.path}`}
-            className='flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between'
+            className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
           >
-            <div className='flex items-center gap-2'>
-              <span className='inline-flex w-14 justify-center rounded-md border border-gray-200/70 bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-900'>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex w-14 justify-center rounded-md border border-gray-200/70 bg-gray-50 px-2 py-1 text-xs font-semibold text-gray-900">
                 {it.method}
               </span>
-              <span className='font-mono text-sm text-gray-900'>{it.path}</span>
+              <span className="font-mono text-sm text-gray-900">{it.path}</span>
             </div>
-            <div className='text-sm text-gray-700'>{it.desc}</div>
+            <div className="text-sm text-gray-700">{it.desc}</div>
           </li>
         ))}
       </ul>
@@ -63,18 +74,19 @@ function EndpointList(props: { items: Array<{ method: string; path: string; desc
 export default function DocsPage() {
   return (
     <main>
-      <div className='rounded-2xl border border-gray-200/70 bg-white p-6 shadow-sm sm:p-10'>
-        <div className='flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between'>
-          <div className='min-w-0'>
-            <h1 className='text-2xl font-semibold'>API Docs</h1>
-            <p className='mt-2 max-w-2xl text-sm text-gray-700'>
-              Developer-friendly documentation for the Countries / States / Cities API. For interactive Swagger UI, open{' '}
-              <Link className='underline' href='/api/docs'>
+      <div className="rounded-2xl border border-gray-200/70 bg-white p-6 shadow-sm sm:p-10">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-semibold">API Docs</h1>
+            <p className="mt-2 max-w-2xl text-sm text-gray-700">
+              Developer-friendly documentation for the Countries / States /
+              Cities API. For interactive Swagger UI, open{" "}
+              <Link className="underline" href="/api/docs">
                 /api/docs
               </Link>
               .
             </p>
-            <div className='mt-4 flex flex-wrap gap-2'>
+            <div className="mt-4 flex flex-wrap gap-2">
               <Pill>OpenAPI 3.0</Pill>
               <Pill>Pagination</Pill>
               <Pill>Search</Pill>
@@ -83,30 +95,32 @@ export default function DocsPage() {
             </div>
           </div>
 
-          <div className='w-full max-w-xl rounded-2xl border border-gray-200/70 bg-gray-50 p-4 shadow-sm'>
-            <div className='text-sm font-semibold text-gray-900'>Quick links</div>
-            <div className='mt-3 grid gap-2 sm:grid-cols-2'>
+          <div className="w-full max-w-xl rounded-2xl border border-gray-200/70 bg-gray-50 p-4 shadow-sm">
+            <div className="text-sm font-semibold text-gray-900">
+              Quick links
+            </div>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
               <Link
-                className='rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50'
-                href='/regions'
+                className="rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50"
+                href="/regions"
               >
                 Browse Regions →
               </Link>
               <Link
-                className='rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50'
-                href='/countries'
+                className="rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50"
+                href="/countries"
               >
                 Browse Countries →
               </Link>
               <Link
-                className='rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50'
-                href='/terms'
+                className="rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50"
+                href="/terms"
               >
                 Terms of Service →
               </Link>
               <Link
-                className='rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50'
-                href='/api/openapi'
+                className="rounded-xl border border-gray-200/70 bg-white px-4 py-3 text-sm hover:bg-gray-50"
+                href="/api/openapi"
               >
                 OpenAPI JSON →
               </Link>
@@ -114,54 +128,82 @@ export default function DocsPage() {
           </div>
         </div>
 
-        <div className='mt-10 grid gap-6 lg:grid-cols-12'>
-          <aside className='lg:col-span-4'>
-            <div className='sticky top-24 rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm'>
-              <div className='text-sm font-semibold'>On this page</div>
-              <nav className='mt-3 space-y-2 text-sm'>
-                <a className='block rounded-md px-2 py-1 hover:bg-gray-50' href='#attribution'>
+        <div className="mt-10 grid gap-6 lg:grid-cols-12">
+          <aside className="lg:col-span-4">
+            <div className="sticky top-24 rounded-2xl border border-gray-200/70 bg-white p-5 shadow-sm">
+              <div className="text-sm font-semibold">On this page</div>
+              <nav className="mt-3 space-y-2 text-sm">
+                <a
+                  className="block rounded-md px-2 py-1 hover:bg-gray-50"
+                  href="#attribution"
+                >
                   Attribution
                 </a>
-                <a className='block rounded-md px-2 py-1 hover:bg-gray-50' href='#usage'>
+                <a
+                  className="block rounded-md px-2 py-1 hover:bg-gray-50"
+                  href="#usage"
+                >
                   API Usage Terms
                 </a>
-                <a className='block rounded-md px-2 py-1 hover:bg-gray-50' href='#regions'>
+                <a
+                  className="block rounded-md px-2 py-1 hover:bg-gray-50"
+                  href="#regions"
+                >
                   Regions API
                 </a>
-                <a className='block rounded-md px-2 py-1 hover:bg-gray-50' href='#subregions'>
+                <a
+                  className="block rounded-md px-2 py-1 hover:bg-gray-50"
+                  href="#subregions"
+                >
                   Subregions API
                 </a>
-                <a className='block rounded-md px-2 py-1 hover:bg-gray-50' href='#relationships'>
+                <a
+                  className="block rounded-md px-2 py-1 hover:bg-gray-50"
+                  href="#relationships"
+                >
                   Relationships
                 </a>
-                <a className='block rounded-md px-2 py-1 hover:bg-gray-50' href='#license'>
+                <a
+                  className="block rounded-md px-2 py-1 hover:bg-gray-50"
+                  href="#license"
+                >
                   License
                 </a>
               </nav>
             </div>
           </aside>
 
-          <div className='min-w-0 grid gap-6 lg:col-span-8'>
+          <div className="min-w-0 grid gap-6 lg:col-span-8">
             <SectionCard
-              id='attribution'
-              title='Attribution'
-              description='A copy-ready attribution section for README or product docs.'
+              id="attribution"
+              title="Attribution"
+              description="A copy-ready attribution section for README or product docs."
             >
-              <div className='rounded-xl border border-gray-200/70 bg-gray-50 p-4'>
-                <div className='text-sm font-semibold text-gray-900'>Iqbal Mahmud</div>
-                <div className='mt-1 text-sm text-gray-700'>Software Engineer</div>
-                <p className='mt-3 text-sm text-gray-700'>
-                  I build full-stack products with a focus on clean architecture and DRY, maintainable code.
+              <div className="rounded-xl border border-gray-200/70 bg-gray-50 p-4">
+                <div className="text-sm font-semibold text-gray-900">
+                  Iqbal Mahmud
+                </div>
+                <div className="mt-1 text-sm text-gray-700">
+                  Software Engineer
+                </div>
+                <p className="mt-3 text-sm text-gray-700">
+                  I build full-stack products with a focus on clean architecture
+                  and DRY, maintainable code.
                 </p>
-                <div className='mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-4'>
-                  <a className='underline' href='https://github.com/mahmud886' target='_blank' rel='noreferrer'>
+                <div className="mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-4">
+                  <a
+                    className="underline"
+                    href="https://github.com/mahmud886"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     GitHub
                   </a>
                   <a
-                    className='underline'
-                    href='https://www.linkedin.com/in/mahmud886/'
-                    target='_blank'
-                    rel='noreferrer'
+                    className="underline"
+                    href="https://www.linkedin.com/in/mahmud886/"
+                    target="_blank"
+                    rel="noreferrer"
                   >
                     LinkedIn
                   </a>
@@ -170,21 +212,27 @@ export default function DocsPage() {
             </SectionCard>
 
             <SectionCard
-              id='usage'
-              title='API Usage Terms (Summary)'
-              description='A simple, developer-friendly policy.'
+              id="usage"
+              title="API Usage Terms (Summary)"
+              description="A simple, developer-friendly policy."
             >
-              <div className='rounded-xl border border-gray-200/70 bg-white p-4'>
-                <ul className='list-disc space-y-2 pl-5 text-sm text-gray-700'>
+              <div className="rounded-xl border border-gray-200/70 bg-white p-4">
+                <ul className="list-disc space-y-2 pl-5 text-sm text-gray-700">
                   <li>Free to use for personal and commercial projects.</li>
-                  <li>No abuse: rate limit your clients and avoid excessive scraping.</li>
+                  <li>
+                    No abuse: rate limit your clients and avoid excessive
+                    scraping.
+                  </li>
                   <li>No illegal or harmful usage.</li>
-                  <li>Attribution is recommended when you publish or redistribute the product.</li>
+                  <li>
+                    Attribution is recommended when you publish or redistribute
+                    the product.
+                  </li>
                   <li>No warranty: use at your own risk.</li>
                 </ul>
-                <div className='mt-4 text-sm text-gray-700'>
-                  Full terms:{' '}
-                  <Link className='underline' href='/terms'>
+                <div className="mt-4 text-sm text-gray-700">
+                  Full terms:{" "}
+                  <Link className="underline" href="/terms">
                     /terms
                   </Link>
                 </div>
@@ -192,26 +240,34 @@ export default function DocsPage() {
             </SectionCard>
 
             <SectionCard
-              id='regions'
-              title='Regions API'
-              description='Endpoints for regions and countries grouped by region.'
+              id="regions"
+              title="Regions API"
+              description="Endpoints for regions and countries grouped by region."
             >
               <EndpointList
                 items={[
-                  { method: 'GET', path: '/api/regions', desc: 'List regions' },
-                  { method: 'GET', path: '/api/regions/:id', desc: 'Region details (includes subregions)' },
-                  { method: 'GET', path: '/api/regions/:id/countries', desc: 'Countries in region' },
+                  { method: "GET", path: "/api/regions", desc: "List regions" },
+                  {
+                    method: "GET",
+                    path: "/api/regions/:id",
+                    desc: "Region details (includes subregions)",
+                  },
+                  {
+                    method: "GET",
+                    path: "/api/regions/:id/countries",
+                    desc: "Countries in region",
+                  },
                 ]}
               />
-              <div className='mt-4'>
+              <div className="mt-4">
                 <CodeBlock
-                  title='GET /api/regions (example)'
+                  title="GET /api/regions (example)"
                   children={JSON.stringify(
                     {
                       success: true,
                       data: [
-                        { id: 1, name: 'Africa', wikidata_id: 'Q15' },
-                        { id: 2, name: 'Americas', wikidata_id: 'Q828' },
+                        { id: 1, name: "Africa", wikidata_id: "Q15" },
+                        { id: 2, name: "Americas", wikidata_id: "Q828" },
                       ],
                       meta: { page: 1, limit: 20, total: 6 },
                     },
@@ -223,29 +279,41 @@ export default function DocsPage() {
             </SectionCard>
 
             <SectionCard
-              id='subregions'
-              title='Subregions API'
-              description='Endpoints for subregions and countries grouped by subregion.'
+              id="subregions"
+              title="Subregions API"
+              description="Endpoints for subregions and countries grouped by subregion."
             >
               <EndpointList
                 items={[
-                  { method: 'GET', path: '/api/subregions', desc: 'List subregions (supports ?region_id=)' },
-                  { method: 'GET', path: '/api/subregions/:id', desc: 'Subregion details' },
-                  { method: 'GET', path: '/api/subregions/:id/countries', desc: 'Countries in subregion' },
+                  {
+                    method: "GET",
+                    path: "/api/subregions",
+                    desc: "List subregions (supports ?region_id=)",
+                  },
+                  {
+                    method: "GET",
+                    path: "/api/subregions/:id",
+                    desc: "Subregion details",
+                  },
+                  {
+                    method: "GET",
+                    path: "/api/subregions/:id/countries",
+                    desc: "Countries in subregion",
+                  },
                 ]}
               />
-              <div className='mt-4'>
+              <div className="mt-4">
                 <CodeBlock
-                  title='GET /api/subregions (example)'
+                  title="GET /api/subregions (example)"
                   children={JSON.stringify(
                     {
                       success: true,
                       data: [
                         {
                           id: 14,
-                          name: 'Southern Asia',
+                          name: "Southern Asia",
                           region_id: 3,
-                          region: { id: 3, name: 'Asia' },
+                          region: { id: 3, name: "Asia" },
                         },
                       ],
                       meta: { page: 1, limit: 20, total: 22 },
@@ -257,23 +325,36 @@ export default function DocsPage() {
               </div>
             </SectionCard>
 
-            <SectionCard id='relationships' title='Relationships' description='How the data is structured.'>
+            <SectionCard
+              id="relationships"
+              title="Relationships"
+              description="How the data is structured."
+            >
               <CodeBlock
-                title='Data model'
+                title="Data model"
                 children={[
-                  'regions (1) ── (many) subregions',
-                  'regions (1) ── (many) countries',
-                  'subregions (1) ── (many) countries',
-                  'countries (1) ── (many) states',
-                  'states (1) ── (many) cities',
-                ].join('\\n')}
+                  "regions (1) ── (many) subregions",
+                  "regions (1) ── (many) countries",
+                  "subregions (1) ── (many) countries",
+                  "countries (1) ── (many) states",
+                  "states (1) ── (many) cities",
+                ].join("\\n")}
               />
             </SectionCard>
 
-            <SectionCard id='license' title='License' description='Open-source licensing and reuse.'>
-              <div className='rounded-xl border border-gray-200/70 bg-white p-4 text-sm text-gray-700'>
-                MIT License. See{' '}
-                <a className='underline' href='/LICENSE' target='_blank' rel='noreferrer'>
+            <SectionCard
+              id="license"
+              title="License"
+              description="Open-source licensing and reuse."
+            >
+              <div className="rounded-xl border border-gray-200/70 bg-white p-4 text-sm text-gray-700">
+                MIT License. See{" "}
+                <a
+                  className="underline"
+                  href="/LICENSE"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   LICENSE
                 </a>
                 .
