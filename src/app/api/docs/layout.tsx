@@ -1,9 +1,5 @@
-import "swagger-ui-react/swagger-ui.css";
+import 'swagger-ui-react/swagger-ui.css';
 
-export default function ApiDocsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ApiDocsLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

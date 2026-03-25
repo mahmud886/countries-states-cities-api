@@ -1,13 +1,13 @@
-import { Pagination } from "@/components/Pagination";
-import { SearchForm } from "@/components/SearchForm";
-import { osmHref } from "@/lib/maps/osm";
-import { internalApiUrl } from "@/lib/server/internalApi";
-import Link from "next/link";
+import { Pagination } from '@/components/Pagination';
+import { SearchForm } from '@/components/SearchForm';
+import { osmHref } from '@/lib/maps/osm';
+import { internalApiUrl } from '@/lib/server/internalApi';
+import Link from 'next/link';
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
 async function fetchJson(url: string) {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   return (await res.json()) as {
     success: boolean;
@@ -24,94 +24,74 @@ async function fetchJson(url: string) {
   };
 }
 
-export default async function StatesPage(props: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function StatesPage(props: { searchParams: Promise<SearchParams> }) {
   const searchParams = await props.searchParams;
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(searchParams)) {
-    if (typeof v === "string" && v.length) qs.set(k, v);
+    if (typeof v === 'string' && v.length) qs.set(k, v);
   }
 
-  const json = await fetchJson(
-    await internalApiUrl("/api/states", qs.toString()),
-  );
+  const json = await fetchJson(await internalApiUrl('/api/states', qs.toString()));
 
   return (
     <main>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between'>
         <div>
-          <h1 className="text-2xl font-semibold">States</h1>
-          <p className="mt-1 text-sm text-gray-700">
-            {json.meta.total} total · Filter by country_id
-          </p>
+          <h1 className='text-2xl font-semibold text-[var(--text)]'>States</h1>
+          <p className='mt-1 text-sm text-[var(--text-muted)]'>{json.meta.total} total · Filter by country_id</p>
         </div>
-        <div className="w-full sm:max-w-md">
-          <SearchForm placeholder="Search states (e.g. California)" />
+        <div className='w-full sm:max-w-md'>
+          <SearchForm placeholder='Search states (e.g. California)' />
         </div>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-gray-700">
+      <div className='mt-6 overflow-hidden rounded-xl border bg-[var(--surface)] shadow-sm'>
+        <div className='overflow-x-auto'>
+          <table className='w-full text-left text-sm'>
+            <thead className='bg-[var(--surface-2)] text-[var(--text-muted)]'>
               <tr>
-                <th className="px-4 py-3">State</th>
-                <th className="px-4 py-3">Code</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3">Map</th>
-                <th className="px-4 py-3">Country</th>
+                <th className='px-4 py-3'>State</th>
+                <th className='px-4 py-3'>Code</th>
+                <th className='px-4 py-3'>Type</th>
+                <th className='px-4 py-3'>Map</th>
+                <th className='px-4 py-3'>Country</th>
               </tr>
             </thead>
             <tbody>
               {json.data.length ? (
                 json.data.map((s) => (
-                  <tr
-                    key={s.id}
-                    className="border-t border-gray-100 hover:bg-gray-50"
-                  >
-                    <td className="px-4 py-3">
-                      <Link
-                        className="font-medium hover:underline"
-                        href={`/states/${s.id}`}
-                      >
+                  <tr key={s.id} className='border-t hover:bg-[var(--surface-2)]'>
+                    <td className='px-4 py-3'>
+                      <Link className='font-medium text-[var(--text)] hover:underline' href={`/states/${s.id}`}>
                         {s.name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-gray-700">
-                      {s.iso2 ?? "-"}
-                    </td>
-                    <td className="px-4 py-3 text-gray-700">{s.type ?? "-"}</td>
-                    <td className="px-4 py-3 text-gray-700">
+                    <td className='px-4 py-3 font-mono text-xs text-[var(--text-muted)]'>{s.iso2 ?? '-'}</td>
+                    <td className='px-4 py-3 text-[var(--text-muted)]'>{s.type ?? '-'}</td>
+                    <td className='px-4 py-3 text-[var(--text-muted)]'>
                       {s.latitude != null && s.longitude != null ? (
                         <a
-                          className="underline"
+                          className='underline text-[var(--text)]'
                           href={osmHref(s.latitude, s.longitude, 6)}
-                          target="_blank"
-                          rel="noreferrer"
+                          target='_blank'
+                          rel='noreferrer'
                         >
                           View →
                         </a>
                       ) : (
-                        "-"
+                        '-'
                       )}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">
-                      <Link
-                        className="underline"
-                        href={`/countries/${s.country_id}`}
-                      >
+                    <td className='px-4 py-3 text-[var(--text-muted)]'>
+                      <Link className='underline text-[var(--text)]' href={`/countries/${s.country_id}`}>
                         {s.country_id}
                       </Link>
                     </td>
                   </tr>
                 ))
               ) : (
-                <tr className="border-t border-gray-100">
-                  <td
-                    className="px-4 py-10 text-center text-sm text-gray-600"
-                    colSpan={5}
-                  >
+                <tr className='border-t'>
+                  <td className='px-4 py-10 text-center text-sm text-[var(--text-muted)]' colSpan={5}>
                     No states found.
                   </td>
                 </tr>
@@ -125,7 +105,7 @@ export default async function StatesPage(props: {
         page={json.meta.page}
         limit={json.meta.limit}
         total={json.meta.total}
-        pathname="/states"
+        pathname='/states'
         searchParams={searchParams}
       />
     </main>

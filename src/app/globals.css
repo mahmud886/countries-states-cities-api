@@ -1,8 +1,61 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 html,
 body {
   height: 100%;
+}
+
+:root {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --border: rgba(148, 163, 184, 0.45);
+  --text: #0f172a;
+  --text-muted: rgba(15, 23, 42, 0.7);
+
+  --primary: #10b981;
+  --primary-foreground: #052e25;
+  --secondary: #3b82f6;
+  --tertiary: #fc7c78;
+  --ring: rgba(16, 185, 129, 0.35);
+
+  --shadow: 0 1px 0 rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-soft: 0 1px 0 rgba(15, 23, 42, 0.05), 0 12px 30px rgba(15, 23, 42, 0.08);
+  --skeleton: rgba(15, 23, 42, 0.08);
+  --skeleton-shine: rgba(15, 23, 42, 0.06);
+}
+
+html.dark {
+  color-scheme: dark;
+  --bg: #0b1220;
+  --surface: #0f172a;
+  --surface-2: #111c33;
+  --border: rgba(148, 163, 184, 0.22);
+  --text: rgba(241, 245, 249, 0.95);
+  --text-muted: rgba(241, 245, 249, 0.7);
+
+  --primary: #10b981;
+  --primary-foreground: #052e25;
+  --secondary: #3b82f6;
+  --tertiary: #fc7c78;
+  --ring: rgba(16, 185, 129, 0.35);
+
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.25), 0 12px 28px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 1px 0 rgba(0, 0, 0, 0.25), 0 16px 36px rgba(0, 0, 0, 0.5);
+  --skeleton: rgba(241, 245, 249, 0.08);
+  --skeleton-shine: rgba(241, 245, 249, 0.14);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+*,
+::before,
+::after {
+  border-color: var(--border);
 }
 
 @keyframes shimmer {
@@ -17,18 +70,18 @@ body {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background-color: rgba(229, 231, 235, 0.7);
+  background-color: var(--skeleton);
 }
 
 .skeleton::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   transform: translateX(-60%);
   background-image: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.55) 35%,
+    var(--skeleton-shine) 35%,
     rgba(255, 255, 255, 0) 70%
   );
   animation: shimmer 1.2s ease-in-out infinite;

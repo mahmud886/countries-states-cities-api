@@ -1,8 +1,8 @@
-import { internalApiUrl } from "@/lib/server/internalApi";
-import Link from "next/link";
+import { internalApiUrl } from '@/lib/server/internalApi';
+import Link from 'next/link';
 
 async function fetchJson(url: string) {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) throw new Error(`Request failed: ${res.status}`);
   return (await res.json()) as {
     success: boolean;
@@ -12,30 +12,27 @@ async function fetchJson(url: string) {
 }
 
 export default async function RegionsPage() {
-  const json = await fetchJson(
-    await internalApiUrl("/api/regions", "limit=50&page=1"),
-  );
+  const json = await fetchJson(await internalApiUrl('/api/regions', 'limit=50&page=1'));
 
   return (
     <main>
       <div>
-        <h1 className="text-2xl font-semibold">Regions</h1>
-        <p className="mt-1 text-sm text-gray-700">
-          {json.meta.total} total · Regions contain subregions, and countries
-          belong to regions.
+        <h1 className='text-2xl font-semibold text-[var(--text)]'>Regions</h1>
+        <p className='mt-1 text-sm text-[var(--text-muted)]'>
+          {json.meta.total} total · Regions contain subregions, and countries belong to regions.
         </p>
       </div>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className='mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         {json.data.map((r) => (
           <Link
             key={r.id}
             href={`/regions/${r.id}`}
-            className="rounded-xl border border-gray-200/60 bg-white p-5 shadow-sm hover:bg-gray-50"
+            className='rounded-xl border bg-[var(--surface)] p-5 shadow-sm hover:bg-[var(--surface-2)]'
           >
-            <div className="text-sm font-medium">{r.name}</div>
-            <div className="mt-1 text-xs text-gray-600">ID: {r.id}</div>
-            <div className="mt-4 text-sm underline">Open →</div>
+            <div className='text-sm font-medium text-[var(--text)]'>{r.name}</div>
+            <div className='mt-1 text-xs text-[var(--text-muted)]'>ID: {r.id}</div>
+            <div className='mt-4 text-sm underline text-[var(--text)]'>Open →</div>
           </Link>
         ))}
       </div>
