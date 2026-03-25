@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { SearchForm } from "@/components/SearchForm";
 import { Pagination } from "@/components/Pagination";
+import { SearchForm } from "@/components/SearchForm";
+import { osmHref } from "@/lib/maps/osm";
 import { internalApiUrl } from "@/lib/server/internalApi";
+import Link from "next/link";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -17,6 +18,8 @@ async function fetchJson(url: string) {
       iso3: string | null;
       capital: string | null;
       emoji: string | null;
+      latitude: number | null;
+      longitude: number | null;
     }>;
     meta: { page: number; limit: number; total: number };
   };
@@ -58,6 +61,7 @@ export default async function CountriesPage(props: {
                 <th className="px-4 py-3">Country</th>
                 <th className="px-4 py-3">ISO2</th>
                 <th className="px-4 py-3">Capital</th>
+                <th className="px-4 py-3">Map</th>
                 <th className="px-4 py-3 text-right">ID</th>
               </tr>
             </thead>
@@ -81,6 +85,20 @@ export default async function CountriesPage(props: {
                     <td className="px-4 py-3 text-gray-700">
                       {c.capital ?? "-"}
                     </td>
+                    <td className="px-4 py-3 text-gray-700">
+                      {c.latitude != null && c.longitude != null ? (
+                        <a
+                          className="underline"
+                          href={osmHref(c.latitude, c.longitude, 5)}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View →
+                        </a>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-right font-mono text-xs text-gray-700">
                       {c.id}
                     </td>
@@ -90,7 +108,7 @@ export default async function CountriesPage(props: {
                 <tr className="border-t border-gray-100">
                   <td
                     className="px-4 py-10 text-center text-sm text-gray-600"
-                    colSpan={4}
+                    colSpan={5}
                   >
                     No countries found.
                   </td>

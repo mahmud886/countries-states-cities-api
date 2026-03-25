@@ -1,4 +1,5 @@
 import { internalApiUrl } from "@/lib/server/internalApi";
+import { MapEmbed } from "@/components/MapEmbed";
 import Link from "next/link";
 
 async function fetchJson(url: string) {
@@ -18,6 +19,8 @@ export default async function StateDetailsPage(props: {
     name: string;
     iso2: string | null;
     type: string | null;
+    latitude: number | null;
+    longitude: number | null;
     country_id: number;
     country: { id: number; name: string; iso2: string | null } | null;
   };
@@ -60,6 +63,17 @@ export default async function StateDetailsPage(props: {
           Back
         </Link>
       </div>
+
+      {state.latitude != null && state.longitude != null ? (
+        <div className="mt-8">
+          <MapEmbed
+            title="Location"
+            lat={state.latitude}
+            lng={state.longitude}
+            zoom={6}
+          />
+        </div>
+      ) : null}
 
       <section className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
         <div className="border-b border-gray-100 px-4 py-3">

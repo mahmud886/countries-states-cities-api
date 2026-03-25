@@ -1,3 +1,4 @@
+import { MapEmbed } from "@/components/MapEmbed";
 import { internalApiUrl } from "@/lib/server/internalApi";
 import Link from "next/link";
 
@@ -23,6 +24,30 @@ export default async function RegionDetailsPage(props: {
     subregions: Array<{ id: number; name: string }>;
   };
 
+  const countries = (countriesRes.data ?? []) as Array<{
+    id: number;
+    name: string;
+    emoji: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    subregion: { id: number; name: string } | null;
+  }>;
+
+  const coords = countries
+    .map((c) => ({ lat: c.latitude, lng: c.longitude }))
+    .filter(
+      (p): p is { lat: number; lng: number } =>
+        typeof p.lat === "number" && typeof p.lng === "number",
+    );
+
+  const center =
+    coords.length > 0
+      ? {
+          lat: coords.reduce((sum, p) => sum + p.lat, 0) / coords.length,
+          lng: coords.reduce((sum, p) => sum + p.lng, 0) / coords.length,
+        }
+      : null;
+
   return (
     <main>
       <div className="flex items-start justify-between">
@@ -36,6 +61,17 @@ export default async function RegionDetailsPage(props: {
           Back
         </Link>
       </div>
+
+      {center ? (
+        <div className="mt-8">
+          <MapEmbed
+            title="Region map (center)"
+            lat={center.lat}
+            lng={center.lng}
+            zoom={3}
+          />
+        </div>
+      ) : null}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">
@@ -67,8 +103,8 @@ export default async function RegionDetailsPage(props: {
             <div className="font-medium">Countries (first 50)</div>
           </div>
           <ul className="divide-y divide-gray-100 text-sm">
-            {countriesRes.data?.length ? (
-              countriesRes.data.map((c: any) => (
+            {countries.length ? (
+              countries.map((c) => (
                 <li key={c.id} className="px-4 py-3">
                   <Link
                     className="font-medium hover:underline"

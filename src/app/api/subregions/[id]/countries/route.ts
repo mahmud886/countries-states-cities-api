@@ -1,5 +1,3 @@
-import { z } from "zod";
-import { createPublicClient } from "@/utils/supabase/public";
 import { IdParamSchema } from "@/lib/api/id";
 import {
   getStringParam,
@@ -7,6 +5,8 @@ import {
   SortOrderSchema,
 } from "@/lib/api/params";
 import { jsonError, jsonSuccess } from "@/lib/api/response";
+import { createPublicClient } from "@/utils/supabase/public";
+import { z } from "zod";
 
 const SortBySchema = z
   .string()
@@ -40,10 +40,8 @@ export async function GET(
     let query = supabase
       .from("countries")
       .select(
-        "id,name,iso2,iso3,capital,emoji,region:regions(id,name),subregion:subregions(id,name,region_id)",
-        {
-          count: "exact",
-        },
+        "id,name,iso2,iso3,capital,emoji,latitude,longitude,region:regions(id,name),subregion:subregions(id,name,region_id)",
+        { count: "exact" },
       )
       .eq("subregion_id", subregionId);
 

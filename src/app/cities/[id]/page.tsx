@@ -1,4 +1,5 @@
 import { internalApiUrl } from "@/lib/server/internalApi";
+import { MapEmbed } from "@/components/MapEmbed";
 import Link from "next/link";
 
 async function fetchJson(url: string) {
@@ -65,6 +66,17 @@ export default async function CityDetailsPage(props: {
           Back
         </Link>
       </div>
+
+      {city.latitude != null && city.longitude != null ? (
+        <div className="mt-8">
+          <MapEmbed
+            title="Location"
+            lat={city.latitude}
+            lng={city.longitude}
+            zoom={10}
+          />
+        </div>
+      ) : null}
     </main>
   );
 }

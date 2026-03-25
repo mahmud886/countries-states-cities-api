@@ -1,11 +1,11 @@
-import { z } from "zod";
-import { createPublicClient } from "@/utils/supabase/public";
 import {
   getStringParam,
   parsePagination,
   SortOrderSchema,
 } from "@/lib/api/params";
 import { jsonError, jsonSuccess } from "@/lib/api/response";
+import { createPublicClient } from "@/utils/supabase/public";
+import { z } from "zod";
 
 const SortBySchema = z
   .string()
@@ -44,7 +44,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from("countries")
       .select(
-        "id,name,iso2,iso3,capital,currency,currency_name,currency_symbol,emoji,population,region:regions(id,name),subregion:subregions(id,name,region_id)",
+        "id,name,iso2,iso3,capital,currency,currency_name,currency_symbol,emoji,population,latitude,longitude,region:regions(id,name),subregion:subregions(id,name,region_id)",
         { count: "exact" },
       );
 

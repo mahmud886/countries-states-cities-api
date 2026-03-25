@@ -1,3 +1,4 @@
+import { MapEmbed } from "@/components/MapEmbed";
 import { internalApiUrl } from "@/lib/server/internalApi";
 import Link from "next/link";
 
@@ -24,6 +25,8 @@ export default async function CountryDetailsPage(props: {
     currency: string | null;
     currency_name: string | null;
     emoji: string | null;
+    latitude: number | null;
+    longitude: number | null;
     region: { id: number; name: string } | null;
     subregion: { id: number; name: string } | null;
   };
@@ -96,6 +99,17 @@ export default async function CountryDetailsPage(props: {
           Back
         </Link>
       </div>
+
+      {country.latitude != null && country.longitude != null ? (
+        <div className="mt-8">
+          <MapEmbed
+            title="Location"
+            lat={country.latitude}
+            lng={country.longitude}
+            zoom={5}
+          />
+        </div>
+      ) : null}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="overflow-hidden rounded-xl border border-gray-200 bg-white">

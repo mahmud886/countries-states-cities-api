@@ -1,3 +1,4 @@
+import { MapEmbed } from "@/components/MapEmbed";
 import { internalApiUrl } from "@/lib/server/internalApi";
 import Link from "next/link";
 
@@ -25,6 +26,29 @@ export default async function SubregionDetailsPage(props: {
     region_id: number;
     region: { id: number; name: string } | null;
   };
+
+  const countries = (countriesRes.data ?? []) as Array<{
+    id: number;
+    name: string;
+    emoji: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  }>;
+
+  const coords = countries
+    .map((c) => ({ lat: c.latitude, lng: c.longitude }))
+    .filter(
+      (p): p is { lat: number; lng: number } =>
+        typeof p.lat === "number" && typeof p.lng === "number",
+    );
+
+  const center =
+    coords.length > 0
+      ? {
+          lat: coords.reduce((sum, p) => sum + p.lat, 0) / coords.length,
+          lng: coords.reduce((sum, p) => sum + p.lng, 0) / coords.length,
+        }
+      : null;
 
   return (
     <main>
@@ -54,13 +78,24 @@ export default async function SubregionDetailsPage(props: {
         </Link>
       </div>
 
+      {center ? (
+        <div className="mt-8">
+          <MapEmbed
+            title="Subregion map (center)"
+            lat={center.lat}
+            lng={center.lng}
+            zoom={4}
+          />
+        </div>
+      ) : null}
+
       <section className="mt-8 overflow-hidden rounded-xl border border-gray-200 bg-white">
         <div className="border-b border-gray-100 px-4 py-3">
           <div className="font-medium">Countries (first 50)</div>
         </div>
         <ul className="divide-y divide-gray-100 text-sm">
-          {countriesRes.data?.length ? (
-            countriesRes.data.map((c: any) => (
+          {countries.length ? (
+            countries.map((c) => (
               <li key={c.id} className="px-4 py-3">
                 <Link
                   className="font-medium hover:underline"
