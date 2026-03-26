@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 export function Pagination(props: {
   page: number;
@@ -15,23 +15,25 @@ export function Pagination(props: {
   const toQuery = (nextPage: number) => {
     const params = new URLSearchParams();
     for (const [k, v] of Object.entries(searchParams)) {
-      if (k === 'page') continue;
-      if (typeof v === 'string' && v.length) params.set(k, v);
+      if (k === "page") continue;
+      if (typeof v === "string" && v.length) params.set(k, v);
     }
-    params.set('page', String(nextPage));
-    params.set('limit', String(limit));
+    params.set("page", String(nextPage));
+    params.set("limit", String(limit));
     return `${pathname}?${params.toString()}`;
   };
 
   return (
-    <div className='mt-4 flex items-center justify-between text-sm'>
-      <div className='text-[var(--text-muted)]'>
+    <div className="mt-4 flex items-center justify-between text-sm">
+      <div className="text-[var(--text-muted)]">
         Showing {from}-{to} of {total} · Page {page}/{totalPages}
       </div>
-      <div className='flex gap-2'>
+      <div className="flex gap-2">
         <Link
           className={`rounded-md border bg-[var(--surface)] px-3 py-1.5 shadow-sm ${
-            page <= 1 ? 'pointer-events-none opacity-50' : 'hover:bg-[var(--surface-2)]'
+            page <= 1
+              ? "pointer-events-none opacity-50"
+              : "hover:bg-[var(--surface-2)]"
           }`}
           href={toQuery(Math.max(1, page - 1))}
         >
@@ -39,7 +41,9 @@ export function Pagination(props: {
         </Link>
         <Link
           className={`rounded-md border bg-[var(--surface)] px-3 py-1.5 shadow-sm ${
-            page >= totalPages ? 'pointer-events-none opacity-50' : 'hover:bg-[var(--surface-2)]'
+            page >= totalPages
+              ? "pointer-events-none opacity-50"
+              : "hover:bg-[var(--surface-2)]"
           }`}
           href={toQuery(Math.min(totalPages, page + 1))}
         >

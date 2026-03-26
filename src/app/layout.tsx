@@ -1,18 +1,22 @@
-import type { Metadata } from 'next';
-import Script from 'next/script';
-import './globals.css';
-import { AppShell } from '@/components/AppShell';
+import type { Metadata } from "next";
+import Script from "next/script";
+import "./globals.css";
+import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: 'Countries / States / Cities',
-  description: 'Explorer UI for countries, states, and cities.',
+  title: "Countries / States / Cities",
+  description: "Explorer UI for countries, states, and cities.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
-        <Script id='theme-init' strategy='beforeInteractive'>
+        <Script id="theme-init" strategy="beforeInteractive">
           {`(() => {
   try {
     const stored = localStorage.getItem('theme');
@@ -30,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 })();`}
         </Script>
       </head>
-      <body className='min-h-screen'>
+      <body className="min-h-screen">
         <AppShell>{children}</AppShell>
       </body>
     </html>

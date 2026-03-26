@@ -1,52 +1,104 @@
-import { IdParamSchema } from '@/lib/api/id';
-import { getStringParam, parsePagination, SortOrderSchema } from '@/lib/api/params';
-import { jsonError, jsonSuccess } from '@/lib/api/response';
-import { createPublicClient } from '@/utils/supabase/public';
-import { z } from 'zod';
+import { fetchAllPages } from "@/lib/api/fetchAll";
+import { IdParamSchema } from "@/lib/api/id";
+import {
+  getStringParam,
+  parsePagination,
+  SortOrderSchema,
+} from "@/lib/api/params";
+import { jsonError, jsonSuccess } from "@/lib/api/response";
+import { createPublicClient } from "@/utils/supabase/public";
+import { z } from "zod";
 
 const SortBySchema = z
   .string()
   .optional()
-  .transform((v) => (v ?? 'name').toLowerCase())
-  .refine((v) => v === 'name' || v === 'id' || v === 'population', 'Invalid sort')
-  .transform((v) => v as 'name' | 'id' | 'population');
+  .transform((v) => (v ?? "name").toLowerCase())
+  .refine(
+    (v) => v === "name" || v === "id" || v === "population",
+    "Invalid sort",
+  )
+  .transform((v) => v as "name" | "id" | "population");
 
-export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ id: string }> },
+) {
   try {
     const { id } = await context.params;
     const subregionId = IdParamSchema.parse(id);
 
     const url = new URL(request.url);
-    const { page, limit, offset } = parsePagination(url.searchParams);
-    const search = getStringParam(url.searchParams, 'search');
-    const sortBy = SortBySchema.parse(url.searchParams.get('sort') ?? undefined);
-    const order = SortOrderSchema.parse(url.searchParams.get('order') ?? undefined);
+    const { page, limit, offset, paginate } = parsePagination(url.searchParams);
+    const search = getStringParam(url.searchParams, "search");
+    const sortBy = SortBySchema.parse(
+      url.searchParams.get("sort") ?? undefined,
+    );
+    const order = SortOrderSchema.parse(
+      url.searchParams.get("order") ?? undefined,
+    );
 
     const supabase = createPublicClient();
-    let query = supabase
-      .from('countries')
-      .select(
-        'id,name,iso2,iso3,capital,emoji,latitude,longitude,region:regions(id,name),subregion:subregions(id,name,region_id)',
-        { count: 'exact' },
-      )
-      .eq('subregion_id', subregionId);
+    const baseQuery = () => {
+      let query = supabase
+        .from("countries")
+        .select(
+          "id,name,iso2,iso3,capital,emoji,latitude,longitude,region:regions(id,name),subregion:subregions(id,name,region_id)",
+          { count: "exact" },
+        )
+        .eq("subregion_id", subregionId);
 
-    if (search) query = query.ilike('name', `%${search}%`);
+      if (search) query = query.ilike("name", `%${search}%`);
 
-    query = query.order(sortBy, { ascending: order === 'asc' });
-    query = query.range(offset, offset + limit - 1);
+      query = query.order(sortBy, { ascending: order === "asc" });
+      return query;
+    };
 
-    const { data, error, count } = await query;
+    let data: any[] | null;
+    let error: { message: string } | null;
+    let total: number | null;
+
+    if (paginate) {
+      const res = await baseQuery().range(offset, offset + limit - 1);
+      data = res.data ?? null;
+      error = res.error;
+      total = (res as any).count ?? null;
+    } else {
+      const res = await fetchAllPages({
+        fetchPage: async (from, to) => {
+          const r = await baseQuery().range(from, to);
+          return {
+            data: r.data ?? null,
+            error: r.error,
+            count: (r as any).count ?? null,
+          };
+        },
+      });
+      data = res.data;
+      error = res.error;
+      total = res.total;
+    }
     if (error) {
-      return jsonError({ status: 500, message: error.message, code: 'DB_ERROR' });
+      return jsonError({
+        status: 500,
+        message: error.message,
+        code: "DB_ERROR",
+      });
     }
 
-    return jsonSuccess(data ?? [], { meta: { page, limit, total: count ?? 0 } });
+    const finalTotal = total ?? data?.length ?? 0;
+    const effectiveLimit = paginate ? limit : finalTotal;
+    return jsonSuccess(data ?? [], {
+      meta: {
+        page: paginate ? page : 1,
+        limit: effectiveLimit,
+        total: finalTotal,
+      },
+    });
   } catch (err) {
     return jsonError({
       status: 400,
-      message: 'Invalid request',
-      code: 'BAD_REQUEST',
+      message: "Invalid request",
+      code: "BAD_REQUEST",
       details: err instanceof Error ? err.message : err,
     });
   }

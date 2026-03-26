@@ -1,0 +1,675 @@
+{
+  "info": {
+    "_postman_id": "9a1d0c9e-4f1d-4c9a-9b5f-4a3c4d1f5a5b",
+    "name": "Countries / States / Cities API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "countryId", "value": "1" },
+    { "key": "stateId", "value": "1" },
+    { "key": "cityId", "value": "1" },
+    { "key": "regionId", "value": "1" },
+    { "key": "subregionId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Meta",
+      "item": [
+        {
+          "name": "OpenAPI JSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/openapi",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "openapi"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Countries",
+      "item": [
+        {
+          "name": "List countries",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries?page=1&limit=20&search=ban&sort=population&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "ban" },
+                { "key": "sort", "value": "population" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) {",
+                  "  pm.collectionVariables.set('countryId', String(json.data[0].id));",
+                  "  if (json.data[0].region && json.data[0].region.id) pm.collectionVariables.set('regionId', String(json.data[0].region.id));",
+                  "  if (json.data[0].subregion && json.data[0].subregion.id) pm.collectionVariables.set('subregionId', String(json.data[0].subregion.id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List countries (all - no pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List countries (filter by iso2)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries?iso2=BD",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries"],
+              "query": [{ "key": "iso2", "value": "BD" }]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get country by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries/{{countryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries", "{{countryId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('countryId', String(json.data.id));",
+                  "if (json.data && json.data.region && json.data.region.id) pm.collectionVariables.set('regionId', String(json.data.region.id));",
+                  "if (json.data && json.data.subregion && json.data.subregion.id) pm.collectionVariables.set('subregionId', String(json.data.subregion.id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List states by country",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries/{{countryId}}/states?page=1&limit=20&search=a&sort=name&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries", "{{countryId}}", "states"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "sort", "value": "name" },
+                { "key": "order", "value": "asc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('stateId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List cities by country",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/countries/{{countryId}}/cities?page=1&limit=20&search=a&sort=population&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "countries", "{{countryId}}", "cities"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "sort", "value": "population" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('cityId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "States",
+      "item": [
+        {
+          "name": "List states",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/states?page=1&limit=20&search=new&sort=name&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "states"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "new" },
+                { "key": "sort", "value": "name" },
+                { "key": "order", "value": "asc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) {",
+                  "  pm.collectionVariables.set('stateId', String(json.data[0].id));",
+                  "  pm.collectionVariables.set('countryId', String(json.data[0].country_id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List states (all - no pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/states",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "states"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get state by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/states/{{stateId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "states", "{{stateId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('stateId', String(json.data.id));",
+                  "if (json.data && json.data.country_id) pm.collectionVariables.set('countryId', String(json.data.country_id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List cities by state",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/states/{{stateId}}/cities?page=1&limit=20&search=a&sort=population&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "states", "{{stateId}}", "cities"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "sort", "value": "population" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('cityId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cities",
+      "item": [
+        {
+          "name": "List cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities?page=1&limit=20&search=dhaka&sort=population&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "dhaka" },
+                { "key": "sort", "value": "population" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) {",
+                  "  pm.collectionVariables.set('cityId', String(json.data[0].id));",
+                  "  pm.collectionVariables.set('stateId', String(json.data[0].state_id));",
+                  "  pm.collectionVariables.set('countryId', String(json.data[0].country_id));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List cities (all - no pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get city by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities/{{cityId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities", "{{cityId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('cityId', String(json.data.id));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Regions",
+      "item": [
+        {
+          "name": "List regions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/regions?page=1&limit=20&search=a&sort=name&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "sort", "value": "name" },
+                { "key": "order", "value": "asc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('regionId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List regions (all - no pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/regions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get region by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/{{regionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", "{{regionId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('regionId', String(json.data.id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List countries by region",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/regions/{{regionId}}/countries?page=1&limit=20&search=a&sort=population&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "regions", "{{regionId}}", "countries"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "sort", "value": "population" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('countryId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Subregions",
+      "item": [
+        {
+          "name": "List subregions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/subregions?page=1&limit=20&search=a&region_id={{regionId}}&sort=name&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subregions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "region_id", "value": "{{regionId}}" },
+                { "key": "sort", "value": "name" },
+                { "key": "order", "value": "asc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('subregionId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List subregions (all - no pagination)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/subregions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subregions"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get subregion by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/subregions/{{subregionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subregions", "{{subregionId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('subregionId', String(json.data.id));",
+                  "if (json.data && json.data.region_id) pm.collectionVariables.set('regionId', String(json.data.region_id));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List countries by subregion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/subregions/{{subregionId}}/countries?page=1&limit=20&search=a&sort=population&order=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "subregions", "{{subregionId}}", "countries"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "a" },
+                { "key": "sort", "value": "population" },
+                { "key": "order", "value": "desc" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success=true', () => pm.expect(json.success).to.eql(true));",
+                  "if (Array.isArray(json.data) && json.data.length) pm.collectionVariables.set('countryId', String(json.data[0].id));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
