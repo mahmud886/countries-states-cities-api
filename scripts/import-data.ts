@@ -1,17 +1,17 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { parse } from "csv-parse/sync";
-import dotenv from "dotenv";
-import { z } from "zod";
-import { createAdminClient } from "../utils/supabase/admin";
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { parse } from 'csv-parse/sync';
+import dotenv from 'dotenv';
+import { z } from 'zod';
+import { createAdminClient } from '../utils/supabase/admin';
 
-dotenv.config({ path: path.join(process.cwd(), ".env.local") });
-dotenv.config({ path: path.join(process.cwd(), ".env") });
+dotenv.config({ path: path.join(process.cwd(), '.env.local') });
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-const CSV_DIR = path.join(process.cwd(), "csv");
+const CSV_DIR = path.join(process.cwd(), 'csv');
 
 function trimToNull(value: unknown): string | null {
-  const str = String(value ?? "").trim();
+  const str = String(value ?? '').trim();
   return str.length ? str : null;
 }
 
@@ -38,7 +38,7 @@ function toNumberOrNull(value: unknown): number | null {
 
 async function readCsv(fileName: string) {
   const fullPath = path.join(CSV_DIR, fileName);
-  const raw = await readFile(fullPath, "utf8");
+  const raw = await readFile(fullPath, 'utf8');
   const records = parse(raw, {
     columns: true,
     skip_empty_lines: true,
@@ -60,12 +60,10 @@ async function upsertInChunks<T extends Record<string, unknown>>(params: {
   for (let i = 0; i < rows.length; i += chunkSize) {
     const chunk = rows.slice(i, i + chunkSize);
     const { error } = await supabase.from(table).upsert(chunk, {
-      onConflict: "id",
+      onConflict: 'id',
     });
     if (error) {
-      throw new Error(
-        `Upsert failed for table "${table}" (rows ${i}..${i + chunk.length - 1}): ${error.message}`,
-      );
+      throw new Error(`Upsert failed for table "${table}" (rows ${i}..${i + chunk.length - 1}): ${error.message}`);
     }
   }
 }
@@ -147,11 +145,11 @@ const CityRow = z.object({
 });
 
 async function main() {
-  const regionsCsv = await readCsv("regions.csv");
-  const subregionsCsv = await readCsv("subregions.csv");
-  const countriesCsv = await readCsv("countries.csv");
-  const statesCsv = await readCsv("states.csv");
-  const citiesCsv = await readCsv("cities.csv");
+  const regionsCsv = await readCsv('regions.csv');
+  const subregionsCsv = await readCsv('subregions.csv');
+  const countriesCsv = await readCsv('countries.csv');
+  const statesCsv = await readCsv('states.csv');
+  const citiesCsv = await readCsv('cities.csv');
 
   const regions = regionsCsv.map((r) => {
     const parsed = RegionRow.parse(r);
@@ -245,13 +243,13 @@ async function main() {
   });
 
   console.log(`regions: ${regions.length}`);
-  await upsertInChunks({ table: "regions", rows: regions });
+  await upsertInChunks({ table: 'regions', rows: regions });
 
   console.log(`subregions: ${subregions.length}`);
-  await upsertInChunks({ table: "subregions", rows: subregions });
+  await upsertInChunks({ table: 'subregions', rows: subregions });
 
   console.log(`countries: ${countries.length}`);
-  await upsertInChunks({ table: "countries", rows: countries });
+  await upsertInChunks({ table: 'countries', rows: countries });
 
   console.log(`states: ${states.length}`);
   const stateIds = new Set(states.map((s) => s.id));
@@ -261,30 +259,19 @@ async function main() {
     parent_id: null,
   }));
 
-  await upsertInChunks({
-    table: "states",
-    rows: statesWithoutParent,
-    chunkSize: 1000,
-  });
+  await upsertInChunks({ table: 'states', rows: statesWithoutParent, chunkSize: 1000 });
 
   const parentUpdates = states.map((s) => ({
     ...s,
-    parent_id:
-      typeof s.parent_id === "number" && stateIds.has(s.parent_id)
-        ? s.parent_id
-        : null,
+    parent_id: typeof s.parent_id === 'number' && stateIds.has(s.parent_id) ? s.parent_id : null,
   }));
 
-  await upsertInChunks({
-    table: "states",
-    rows: parentUpdates,
-    chunkSize: 1000,
-  });
+  await upsertInChunks({ table: 'states', rows: parentUpdates, chunkSize: 1000 });
 
   console.log(`cities: ${cities.length}`);
-  await upsertInChunks({ table: "cities", rows: cities, chunkSize: 1000 });
+  await upsertInChunks({ table: 'cities', rows: cities, chunkSize: 1000 });
 
-  console.log("Import completed.");
+  console.log('Import completed.');
 }
 
 main().catch((err) => {

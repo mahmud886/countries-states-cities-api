@@ -31,9 +31,7 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
-                ]
+                "exec": ["pm.test('Status 200', () => pm.response.to.have.status(200));"]
               }
             }
           ]

@@ -1,64 +1,46 @@
-import { fetchAllPages } from "@/lib/api/fetchAll";
-import {
-  getStringParam,
-  parsePagination,
-  SortOrderSchema,
-} from "@/lib/api/params";
-import { jsonError, jsonSuccess } from "@/lib/api/response";
-import { createPublicClient } from "@/utils/supabase/public";
-import { z } from "zod";
+import { fetchAllPages } from '@/lib/api/fetchAll';
+import { getStringParam, parsePagination, SortOrderSchema } from '@/lib/api/params';
+import { jsonError, jsonSuccess } from '@/lib/api/response';
+import { createPublicClient } from '@/utils/supabase/public';
+import { z } from 'zod';
 
 const SortBySchema = z
   .string()
   .optional()
-  .transform((v) => (v ?? "name").toLowerCase())
-  .refine(
-    (v) =>
-      v === "name" ||
-      v === "id" ||
-      v === "iso2" ||
-      v === "iso3" ||
-      v === "population",
-    "Invalid sort",
-  )
-  .transform((v) => v as "name" | "id" | "iso2" | "iso3" | "population");
+  .transform((v) => (v ?? 'name').toLowerCase())
+  .refine((v) => v === 'name' || v === 'id' || v === 'iso2' || v === 'iso3' || v === 'population', 'Invalid sort')
+  .transform((v) => v as 'name' | 'id' | 'iso2' | 'iso3' | 'population');
 
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const { page, limit, offset, paginate } = parsePagination(url.searchParams);
 
-    const search = getStringParam(url.searchParams, "search");
-    const regionId = getStringParam(url.searchParams, "region_id");
-    const subregionId = getStringParam(url.searchParams, "subregion_id");
-    const iso2 = getStringParam(url.searchParams, "iso2");
-    const iso3 = getStringParam(url.searchParams, "iso3");
-    const sortBy = SortBySchema.parse(
-      url.searchParams.get("sort") ?? undefined,
-    );
-    const order = SortOrderSchema.parse(
-      url.searchParams.get("order") ?? undefined,
-    );
+    const search = getStringParam(url.searchParams, 'search');
+    const regionId = getStringParam(url.searchParams, 'region_id');
+    const subregionId = getStringParam(url.searchParams, 'subregion_id');
+    const iso2 = getStringParam(url.searchParams, 'iso2');
+    const iso3 = getStringParam(url.searchParams, 'iso3');
+    const sortBy = SortBySchema.parse(url.searchParams.get('sort') ?? undefined);
+    const order = SortOrderSchema.parse(url.searchParams.get('order') ?? undefined);
 
     const supabase = createPublicClient();
 
     const baseQuery = () => {
       let query = supabase
-        .from("countries")
+        .from('countries')
         .select(
-          "id,name,iso2,iso3,capital,currency,currency_name,currency_symbol,emoji,population,latitude,longitude,region:regions(id,name),subregion:subregions(id,name,region_id)",
-          { count: "exact" },
+          'id,name,iso2,iso3,capital,currency,currency_name,currency_symbol,emoji,population,latitude,longitude,region:regions(id,name),subregion:subregions(id,name,region_id)',
+          { count: 'exact' },
         );
 
-      if (search) query = query.ilike("name", `%${search}%`);
-      if (regionId)
-        query = query.eq("region_id", Number.parseInt(regionId, 10));
-      if (subregionId)
-        query = query.eq("subregion_id", Number.parseInt(subregionId, 10));
-      if (iso2) query = query.eq("iso2", iso2.toUpperCase());
-      if (iso3) query = query.eq("iso3", iso3.toUpperCase());
+      if (search) query = query.ilike('name', `%${search}%`);
+      if (regionId) query = query.eq('region_id', Number.parseInt(regionId, 10));
+      if (subregionId) query = query.eq('subregion_id', Number.parseInt(subregionId, 10));
+      if (iso2) query = query.eq('iso2', iso2.toUpperCase());
+      if (iso3) query = query.eq('iso3', iso3.toUpperCase());
 
-      query = query.order(sortBy, { ascending: order === "asc" });
+      query = query.order(sortBy, { ascending: order === 'asc' });
       return query;
     };
 
@@ -75,11 +57,7 @@ export async function GET(request: Request) {
       const res = await fetchAllPages({
         fetchPage: async (from, to) => {
           const r = await baseQuery().range(from, to);
-          return {
-            data: r.data ?? null,
-            error: r.error,
-            count: (r as any).count ?? null,
-          };
+          return { data: r.data ?? null, error: r.error, count: (r as any).count ?? null };
         },
       });
       data = res.data;
@@ -88,28 +66,20 @@ export async function GET(request: Request) {
     }
 
     if (error) {
-      return jsonError({
-        status: 500,
-        message: error.message,
-        code: "DB_ERROR",
-      });
+      return jsonError({ status: 500, message: error.message, code: 'DB_ERROR' });
     }
 
     const finalTotal = total ?? data?.length ?? 0;
     const effectiveLimit = paginate ? limit : finalTotal;
 
     return jsonSuccess(data ?? [], {
-      meta: {
-        page: paginate ? page : 1,
-        limit: effectiveLimit,
-        total: finalTotal,
-      },
+      meta: { page: paginate ? page : 1, limit: effectiveLimit, total: finalTotal },
     });
   } catch (err) {
     return jsonError({
       status: 400,
-      message: "Invalid request",
-      code: "BAD_REQUEST",
+      message: 'Invalid request',
+      code: 'BAD_REQUEST',
       details: err instanceof Error ? err.message : err,
     });
   }
