@@ -30,7 +30,7 @@ export function ThemeToggle() {
   return (
     <button
       type='button'
-      className='rounded-md border bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text)] shadow-sm hover:bg-[var(--surface-2)]'
+      className='grid h-9 w-9 place-items-center rounded-md border bg-[var(--surface)] text-[var(--text)] shadow-sm hover:bg-[var(--surface-2)]'
       onClick={() => {
         const next: Theme = theme === 'dark' ? 'light' : 'dark';
         setTheme(next);
@@ -38,7 +38,7 @@ export function ThemeToggle() {
       }}
       aria-label='Toggle theme'
     >
-      {theme === 'dark' ? 'Dark' : 'Light'}
+      <span className='text-sm'>{theme === 'dark' ? '☾' : '☀'}</span>
     </button>
   );
 }
